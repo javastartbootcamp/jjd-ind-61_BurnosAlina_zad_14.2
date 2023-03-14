@@ -9,7 +9,7 @@ public class Main {
         try {
             tools.run();
         } catch (IOException e) {
-            System.err.println("Błąd odczytu lub zapisu pliku.");
+            System.err.println("Błąd odczytu pliku.");
         }
     }
 }

@@ -10,12 +10,11 @@ public class VehicleTools {
     private static final int EXIT = 0;
     private static final int ADD_TO_QUEUE = 1;
     private static final int TAKE_FOR_SERVICE = 2;
-    Scanner scanner = new Scanner(System.in);
+    private Scanner scanner = new Scanner(System.in);
 
     void run() throws IOException {
         String fileName = "vehicles.txt";
-        Queue<Vehicle> vehicles = new LinkedList<>();
-        readFileAndAddToQueue(fileName, vehicles);
+        Queue<Vehicle> vehicles = readFile(fileName);
         int option;
         do {
             option = printAndChooseOption();
@@ -64,18 +63,21 @@ public class VehicleTools {
         vehicles.add(new Vehicle(type, brand, model, year, mileage, vin));
     }
 
-    private void writeToFile(String fileName, Queue<Vehicle> vehicles) throws IOException {
-        BufferedWriter writer = new BufferedWriter(new FileWriter(fileName));
-        while (!vehicles.isEmpty()) {
-            Vehicle vehicle = vehicles.poll();
-            writer.write(vehicle.toString());
-            writer.newLine();
-            writer.flush();
+    private void writeToFile(String fileName, Queue<Vehicle> vehicles) {
+        try (BufferedWriter writer = new BufferedWriter(new FileWriter(fileName))) {
+            while (!vehicles.isEmpty()) {
+                Vehicle vehicle = vehicles.poll();
+                writer.write(vehicle.toString());
+                writer.newLine();
+            }
+        } catch (IOException e) {
+            System.err.println("Nie udało się odczytać pliku");
         }
     }
 
-    private void readFileAndAddToQueue(String fileName, Queue<Vehicle> vehicles) throws IOException {
+    private Queue<Vehicle> readFile(String fileName) throws IOException {
         BufferedReader reader = new BufferedReader(new FileReader(fileName));
+        Queue<Vehicle> vehicles = new LinkedList<>();
         String line;
         while ((line = reader.readLine()) != null) {
             String[] split = line.split(",");
@@ -87,6 +89,7 @@ public class VehicleTools {
             String vin = split[5];
             vehicles.add(new Vehicle(type, brand, model, year, mileage, vin));
         }
+        return vehicles;
     }
 }
 
